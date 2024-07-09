@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-'''async operation in python'''
+'''Task 4's module.
+'''
 import asyncio
 from typing import List
 
@@ -7,9 +8,9 @@ from typing import List
 task_wait_random = __import__('3-tasks').task_wait_random
 
 
-async def task_wait_n(count: int, max_delay: int) -> List[float]:
-    '''executes task_wait_random count times and returns sorted results'''
-    tasks = [task_wait_random(max_delay) for _ in range(count)]
+async def task_wait_n(n: int, max_delay: int) -> List[float]:
+    '''Executes task_wait_random n times.
+    '''
+    tasks = [task_wait_random(max_delay) for _ in range(n)]
     wait_times = await asyncio.gather(*tasks)
     return sorted(wait_times)
-
