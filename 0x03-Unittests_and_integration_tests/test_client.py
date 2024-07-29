@@ -64,8 +64,8 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_get_json.assert_called_once()
 
     @parameterized.expand([
-        ({'license': {'key': "bsd-3-clause"}}, "bsd-3-clause", True),
-        ({'license': {'key': "bsl-1.0"}}, "bsd-3-clause", False),
+        ({'license': {'key': "my_license"}}, "my_license", True),
+        ({'license': {'key': "other_license"}}, "my_license", False),
     ])
     def test_has_license(
         self, repo: Dict, license_key: str, expected: bool
