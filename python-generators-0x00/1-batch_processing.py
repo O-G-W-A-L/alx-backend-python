@@ -1,34 +1,36 @@
-import mysql.connector
-from mysql.connector import Error
+#!/usr/bin/python3
+"""
+Objective: Create a generator to fetch and process data in batches from the users database.
+
+Instructions:
+- stream_users_in_batches(batch_size): fetch rows in batches
+- batch_processing(batch_size): process each batch to filter users over age 25
+- Use no more than 3 loops total
+- Use `yield` for generators
+"""
+
+# Import the `stream_users` generator function from 0-stream_users.py
+stream_users = __import__('0-stream_users')
 
 def stream_users_in_batches(batch_size):
-    """Generator function to stream rows from the user_data table in batches."""
-    connection = None
-    try:
-        connection = mysql.connector.connect(
-            host='localhost',
-            user='hunter',
-            password='pass',
-            database='ALX_prodev'
-        )
-
-        cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM user_data")
-        while True:
-            batch = cursor.fetchmany(batch_size)
-            if not batch:
-                break
+    """
+    Generator that yields lists of user dicts in batches of size `batch_size`.
+    """
+    batch = []
+    for user in stream_users():            # ← Loop 1: pulling one user at a time
+        batch.append(user)
+        if len(batch) == batch_size:
             yield batch
-
-    except Error as e:
-        print(f"Error: {e}")
-    finally:
-        if connection and not connection.is_closed():
-            connection.close()
+            batch = []
+    if batch:                              # yield any remaining users
+        yield batch
 
 def batch_processing(batch_size):
-    """Generator function to process each batch and filter users over the age of 25."""
-    for batch in stream_users_in_batches(batch_size):
-        for user in batch:
+    """
+    Fetches batches via `stream_users_in_batches`, then prints each user
+    over age 25, one per line.
+    """
+    for batch in stream_users_in_batches(batch_size):   # ← Loop 2: iterating batches
+        for user in batch:                              # ← Loop 3: iterating within a batch
             if user['age'] > 25:
-                yield user
+                print(user)
