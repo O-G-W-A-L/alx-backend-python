@@ -1,28 +1,22 @@
-"""a generator that streams rows from an SQL database one by one
-"""
-
 import mysql.connector
 from mysql.connector import Error
-import mariadb.connector
 import csv
 
 def connect_db():
-    """create a connection to the databse
-    """
+    """Create a connection to the MySQL server."""
     try:
         connection = mysql.connector.connect(
             host='localhost',
-            user='root',
-            password='password',
+            user='hunter',
+            password='pass',
         )
         return connection
     except mysql.connector.Error as error:
         print(f"Error connecting to MySQL: {error}")
         return None
 
-def create_db(connection):
-    """create a database
-    """
+def create_database(connection):
+    """Create the ALX_prodev database if it doesn't exist."""
     if not connection:
         return
     try:
@@ -35,13 +29,12 @@ def create_db(connection):
         cursor.close()
 
 def connect_to_prodev():
-    """create a connection to the ALX_prodev database
-    """
+    """Connect to the ALX_prodev database."""
     try:
         connection = mysql.connector.connect(
             host='localhost',
-            name='root',
-            password='password',
+            user='hunter',
+            password='pass',
             database='ALX_prodev',
         )
         return connection
@@ -50,39 +43,37 @@ def connect_to_prodev():
         return None
 
 def create_table(connection):
-    """create a table in the ALX_prodev database
-    """
+    """Create the user_data table with appropriate columns."""
     if not connection:
         return
     try:
         cursor = connection.cursor()
-        cursor.execute("""
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS user_data (
                 user_id CHAR(36) PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 email VARCHAR(100) NOT NULL,
-                age DECIMAL NOT NULL
+                age DECIMAL(5,2) NOT NULL
             );
-        """)
-        print("table user data created successfully")
+        ''')
+        print("Table user_data created successfully")
     except mysql.connector.Error as error:
         print(f"Error creating table: {error}")
     finally:
         cursor.close()
 
-def insert_data(connection, data):
-    """insert data into the user_data table
-    """
+def insert_data(connection, data_file):
+    """Insert data from CSV into user_data table with proper type conversion."""
     if not connection:
         return
     try:
         cursor = connection.cursor()
-        with open(data, newline='') as csvfile:
+        with open(data_file, newline='') as csvfile:
             csvreader = csv.reader(csvfile)
             next(csvreader)
             for row in csvreader:
                 if len(row) != 4:
-                    print(f"Skipping Invalid row: {row}")
+                    print(f"Skipping invalid row: {row}")
                     continue
                 user_id, name, email, age_str = row
                 query = "INSERT IGNORE INTO user_data (user_id, name, email, age) VALUES (%s, %s, %s, %s)"
@@ -96,9 +87,10 @@ def insert_data(connection, data):
         cursor.close()
 
 def stream_user_data(connection):
+    """Generator to stream rows from user_data table one by one."""
     cursor = connection.cursor()
     try:
-        cursor.execute("SELECT * FROM user_data.csv")
+        cursor.execute("SELECT * FROM user_data")
         while True:
             row = cursor.fetchone()
             if row is None:
@@ -106,10 +98,3 @@ def stream_user_data(connection):
             yield row
     finally:
         cursor.close()
-
-if __name__ == "__main__":
-    connection = connect_to_prodev()
-    if connection:
-        create_table(connection)
-        insert_data(connection, "user_data.csv")
-        connection.close()
