@@ -85,16 +85,3 @@ def insert_data(connection, data_file):
         print(f"Error inserting data: {err}")
     finally:
         cursor.close()
-
-def stream_user_data(connection):
-    """Generator to stream rows from user_data table one by one."""
-    cursor = connection.cursor()
-    try:
-        cursor.execute("SELECT * FROM user_data")
-        while True:
-            row = cursor.fetchone()
-            if row is None:
-                break
-            yield row
-    finally:
-        cursor.close()
