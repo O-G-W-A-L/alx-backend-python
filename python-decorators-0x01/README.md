@@ -57,15 +57,15 @@ source venv/bin/activate  # or venv\Scripts\activate on Windows
 ```
 
 Ensure your SQLite database and users table are ready:
-```
-Example SQL:
 
+Example SQL:
+```
     CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL
     );
-
+```
 📦 Project Structure
 
 ```bash
@@ -90,11 +90,13 @@ Example SQL:
 🔁 Task List
 
 Task	Description	Output
-✅ Task 0	@log_queries — Logs all SQL queries with timestamps	Logging SQL activity
-✅ Task 1	@with_connection — Handles opening/closing DB connections	Cleaner DB functions
-✅ Task 2	@transactional — Ensures commits/rollbacks	Robust transactions
-✅ Task 3	@retry_on_failure — Retries failed operations	Fault tolerance
-✅ Task 4	@cache_results — Caches query results	Performance boost
+
+* Task 0	@log_queries — Logs all SQL queries with timestamps	Logging SQL activity
+* Task 1	@with_connection — Handles opening/closing DB connections	Cleaner DB functions
+* Task 2	@transactional — Ensures commits/rollbacks	Robust transactions
+* Task 3	@retry_on_failure — Retries failed operations	Fault tolerance
+* Task 4	@cache_results — Caches query results	Performance boost
+
 💡 Example Usage
 
 - from decorators.log_queries import log_queries
