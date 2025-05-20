@@ -66,28 +66,25 @@ Example SQL:
         email TEXT UNIQUE NOT NULL
     );
 ```
-📦 Project Structure
+
+## 📁 Project Directory Structure
 
 ```bash
-├── decorators/
-│   ├── __init__.py
-│   ├── log_queries.py
-│   ├── with_connection.py
-│   ├── transactional.py
-│   ├── retry.py
-│   └── cache.py
-├── db/
-│   └── database.db
-├── examples/
-│   └── usage_examples.py
-├── tests/
-│   ├── test_log_queries.py
-│   └── ...
-├── README.md
+python-decorators-0x01/
+├── 0-log_queries.py
+├── 1-with_db_connection.py
+├── 2-transactional.py
+├── 3-retry_on_failure.py
+├── 4-cache_query.py
+├── database.db
+├── users.db
+├── setup_db.py
+├── test_db.py
+└── README.md
 
 ```
 
-🔁 Task List
+## 🔁 Task List
 
 Task	Description	Output
 
@@ -110,7 +107,7 @@ def insert_user(conn, name, email):
     cursor = conn.cursor()
     cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)", (name, email))
 
-✅ Best Practices Followed
+## ✅ Best Practices Followed
 
   - Functional purity through decorator abstraction
   - Connection safety using with context managers
@@ -118,7 +115,7 @@ def insert_user(conn, name, email):
   - Readable, maintainable architecture
   - Modular design for real-world reusability
 
-📂 Contributing
+## 📂 Contributing
 
 Contributions are welcome! If you have ideas to improve the decorators or add more features (like metrics, rate limiting, async support), feel free to fork the repo and create a PR.
 🧪 Running Tests
@@ -128,4 +125,3 @@ pytest tests/
 🧠 Author
 
 Built with ❤️ by Hunter passionate about clean code, database reliability, and Python mastery.
-
