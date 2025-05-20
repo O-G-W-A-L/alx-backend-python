@@ -48,16 +48,13 @@ By the end of this project, you will:
 
    ```bash
    git clone https://github.com/your-username/python-db-decorators.git
-   cd python-db-decorators```
-   
+   cd python-db-decorators
+   ```
     Create your virtual environment:
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
 ```
-Install dependencies (if any):
-```bash
-pip install -r requirements.txt
 
 Ensure your SQLite database and users table are ready:
 ```
@@ -87,21 +84,22 @@ Example SQL:
 │   ├── test_log_queries.py
 │   └── ...
 ├── README.md
-└── requirements.txt
+
 ```
+
 🔁 Task List
+
 Task	Description	Output
 ✅ Task 0	@log_queries — Logs all SQL queries with timestamps	Logging SQL activity
 ✅ Task 1	@with_connection — Handles opening/closing DB connections	Cleaner DB functions
 ✅ Task 2	@transactional — Ensures commits/rollbacks	Robust transactions
 ✅ Task 3	@retry_on_failure — Retries failed operations	Fault tolerance
 ✅ Task 4	@cache_results — Caches query results	Performance boost
-
 💡 Example Usage
 
-from decorators.log_queries import log_queries
-from decorators.with_connection import with_connection
-from decorators.transactional import transactional
+- from decorators.log_queries import log_queries
+- from decorators.with_connection import with_connection
+- from decorators.transactional import transactional
 
 @log_queries
 @with_connection
@@ -112,11 +110,11 @@ def insert_user(conn, name, email):
 
 ✅ Best Practices Followed
 
-    Functional purity through decorator abstraction
-    Connection safety using with context managers
-    Graceful failure with retries and fallbacks
-    Readable, maintainable architecture
-    Modular design for real-world reusability
+  - Functional purity through decorator abstraction
+  - Connection safety using with context managers
+  - Graceful failure with retries and fallbacks
+  - Readable, maintainable architecture
+  - Modular design for real-world reusability
 
 📂 Contributing
 
