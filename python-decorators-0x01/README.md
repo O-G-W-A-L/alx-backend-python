@@ -96,6 +96,7 @@ Task	Description	Output
 ✅ Task 2	@transactional — Ensures commits/rollbacks	Robust transactions
 ✅ Task 3	@retry_on_failure — Retries failed operations	Fault tolerance
 ✅ Task 4	@cache_results — Caches query results	Performance boost
+
 💡 Example Usage
 
 from decorators.log_queries import log_queries
