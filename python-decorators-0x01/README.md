@@ -48,19 +48,19 @@ By the end of this project, you will:
 
    ```bash
    git clone https://github.com/your-username/python-db-decorators.git
-   cd python-db-decorators
-
+   cd python-db-decorators```
+   
     Create your virtual environment:
-
+```bash
 python3 -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
-
+```
 Install dependencies (if any):
-
+```bash
 pip install -r requirements.txt
 
 Ensure your SQLite database and users table are ready:
-
+```
 Example SQL:
 
     CREATE TABLE users (
@@ -71,7 +71,7 @@ Example SQL:
 
 📦 Project Structure
 
-.
+```bash
 ├── decorators/
 │   ├── __init__.py
 │   ├── log_queries.py
@@ -88,7 +88,7 @@ Example SQL:
 │   └── ...
 ├── README.md
 └── requirements.txt
-
+```
 🔁 Task List
 Task	Description	Output
 ✅ Task 0	@log_queries — Logs all SQL queries with timestamps	Logging SQL activity
@@ -112,13 +112,9 @@ def insert_user(conn, name, email):
 ✅ Best Practices Followed
 
     Functional purity through decorator abstraction
-
     Connection safety using with context managers
-
     Graceful failure with retries and fallbacks
-
     Readable, maintainable architecture
-
     Modular design for real-world reusability
 
 📂 Contributing
@@ -130,13 +126,5 @@ pytest tests/
 
 🧠 Author
 
-Built with ❤️ by a software engineer passionate about clean code, database reliability, and Python mastery.
-📄 License
-
-MIT License – see LICENSE file for details.
-
-
----
-
-Let me know if you’d like me to generate code for each decorator file (`log_queries.py`, `with_connection.py`, etc.), or provide test cases for the modules.
+Built with ❤️ by Hunter passionate about clean code, database reliability, and Python mastery.
 
