@@ -22,7 +22,8 @@ This project demonstrates the use of **custom class-based context managers** and
 ```bash
 pip install aiosqlite
 ```
-    Setup the database with sample data:
+
+## Setup the database with sample data:
 ```bash
 python setup_db.py
 ```
