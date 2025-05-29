@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A module for testing the utils module."""
+"""A module for testing the utils module"""
 import unittest
 from typing import Dict, Tuple, Union
 from unittest.mock import patch, Mock
@@ -8,7 +8,7 @@ from utils import access_nested_map, get_json, memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
-    """Tests the `access_nested_map` function."""
+    """Tests the 'access_nested_map' function."""
 
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
@@ -22,6 +22,7 @@ class TestAccessNestedMap(unittest.TestCase):
             path: Tuple[str],
             expected: Union[Dict, int]) -> None:
         """Test that access_nested_map returns the expected output."""
+
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
     @parameterized.expand([
@@ -36,6 +37,7 @@ class TestAccessNestedMap(unittest.TestCase):
             missing_key: str) -> None:
         """Test that access_nested_map raises
         KeyError with the expected message."""
+
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
         self.assertEqual(str(cm.exception), f"'{missing_key}'")
@@ -51,6 +53,7 @@ class TestGetJson(unittest.TestCase):
     ])
     def test_get_json(self, test_url: str, test_payload: Dict) -> None:
         """Test that get_json returns the expected payload."""
+
         attrs = {'json.return_value': test_payload}
         with patch("requests.get", return_value=Mock(**attrs)) as req_get:
             self.assertEqual(get_json(test_url), test_payload)
@@ -58,11 +61,12 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """Tests the `memoize` function."""
+    """Tests the 'memoize' function."""
 
     def test_memoize(self) -> None:
         """Test that the memoized method returns
         the correct result and is called only once."""
+
         class TestClass:
             def a_method(self):
                 return 42
