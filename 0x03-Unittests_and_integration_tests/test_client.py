@@ -4,7 +4,8 @@ Unit tests for GithubOrgClient class
 """
 import unittest
 from unittest.mock import patch, MagicMock, PropertyMock, Mock
-from parameterized import parameterized, parameterized_class
+from parameterized import parameterized
+from parameterized import parameterized_class
 from requests.exceptions import HTTPError
 from client import GithubOrgClient, get_json
 from typing import Dict, List
