@@ -72,6 +72,7 @@ class TestGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("google")
         self.assertEqual(client.has_license(repo, license_key), expected)
 
+
 @parameterized_class([
     {
         'org_payload': {
@@ -97,22 +98,20 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             'https://api.github.com/orgs/google': cls.org_payload,
             'https://api.github.com/orgs/google/repos': cls.repos_payload,
         }
-        cls.get_patcher = patch(
-            "requests.get", side_effect=cls.mocked_requests_get
-        )
+        cls.get_patcher = patch("requests.get", side_effect=cls.mocked_requests_get)
         cls.get_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """Remove class fixtures after running all tests."""
+        cls.get_patcher.stop()
 
     @classmethod
     def mocked_requests_get(cls, url: str):
         """Mock the requests.get method to return the appropriate payload."""
         if url in cls.route_payload:
             return Mock(**{'json.return_value': cls.route_payload[url]})
-        return HTTPError
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        """Remove class fixtures after running all tests."""
-        cls.get_patcher.stop()
+        raise HTTPError
 
     def test_public_repos(self) -> None:
         """Test the public_repos method."""
@@ -125,3 +124,4 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(
             client.public_repos(license="apache-2.0"), self.apache2_repos
         )
+
