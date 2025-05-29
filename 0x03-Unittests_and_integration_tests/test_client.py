@@ -99,23 +99,22 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             'https://api.github.com/orgs/google': cls.org_payload,
             'https://api.github.com/orgs/google/repos': cls.repos_payload,
         }
-
-    def setUp(self) -> None:
-        """Set up instance fixtures."""
-        self.get_patcher = patch(
-            "requests.get", side_effect=self.mocked_requests_get
+        cls.get_patcher = patch(
+            "requests.get", side_effect=cls.mocked_requests_get
         )
-        self.mock_get = self.get_patcher.start()
+        cls.mock_get = cls.get_patcher.start()
 
-    def tearDown(self) -> None:
-        """Tear down instance fixtures."""
-        self.get_patcher.stop()
-
-    def mocked_requests_get(self, url: str):
-        """Mock requests.get to return payloads."""
-        if url in self.route_payload:
-            return Mock(**{'json.return_value': self.route_payload[url]})
+    @classmethod
+    def mocked_requests_get(cls, url: str):
+        """Mock the requests.get method to return the appropriate payload."""
+        if url in cls.route_payload:
+            return Mock(**{'json.return_value': cls.route_payload[url]})
         raise HTTPError()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """Remove class fixtures after running all tests."""
+        cls.get_patcher.stop()
 
     def test_public_repos(self) -> None:
         """Test the public_repos method."""
