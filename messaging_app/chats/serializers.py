@@ -48,5 +48,5 @@ class ConversationSerializer(serializers.ModelSerializer):
         'created_at', 'messages', 'message_count']
         read_only_fields = ['created_at']
     
-        def get_message_count(self, obj):
+    def get_message_count(self, obj):
         return obj.messages.count()
