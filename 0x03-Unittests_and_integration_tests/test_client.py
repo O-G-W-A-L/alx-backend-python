@@ -96,15 +96,13 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls) -> None:
         """Set up class fixtures before running tests."""
         cls.get_patcher = patch('requests.get')
-        cls.mock_get = cls.get_patcher.start()
-        
+        cls.mock_get = cls.get_patcher.start()      
         def side_effect(url):
             if url == "https://api.github.com/orgs/google":
                 return Mock(json=lambda: cls.org_payload)
             if url == "https://api.github.com/orgs/google/repos":
                 return Mock(json=lambda: cls.repos_payload)
             return HTTPError()
-            
         cls.mock_get.side_effect = side_effect
 
     @classmethod
