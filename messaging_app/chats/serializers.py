@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import User, Conversation, Message
 
 class UserSerializer(serializers.ModelSerializer):
+    display_name = serializers.CharField(source='get_full_name', read_only=True)
+
     class Meta:
         model = User
         fields = ['user_id', 'email', 'first_name', 'last_name', 'phone_number', 'password']
@@ -21,6 +23,11 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+    def validate_email(self, value):
+        if "spam" in value:
+            raise serializers.ValidationError("Invalid email address.")
+        return value
+
 class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.PrimaryKeyRelatedField(read_only=True)
     conversation = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -33,8 +40,13 @@ class MessageSerializer(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     messages = MessageSerializer(many=True, read_only=True)
+    message_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['conversation_id', 'participants', 'created_at', 'messages']
+        fields = ['conversation_id', 'participants',
+        'created_at', 'messages', 'message_count']
         read_only_fields = ['created_at']
+    
+        def get_message_count(self, obj):
+        return obj.messages.count()
