@@ -67,7 +67,8 @@ class TestGithubOrgClient(unittest.TestCase):
         ({'license': {'key': "my_license"}}, "my_license", True),
         ({'license': {'key': "other_license"}}, "my_license", False),
     ])
-    def test_has_license(self, repo: Dict, license_key: str, expected: bool
+    def test_has_license(
+        self, repo: Dict, license_key: str, expected: bool
     ) -> None:
         """Test the has_license method."""
         client = GithubOrgClient("google")
@@ -102,14 +103,14 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch(
             "requests.get", side_effect=cls.mocked_requests_get
         )
-        cls.mock_get = cls.get_patcher.start()
+        cls.get_patcher.start()
 
     @classmethod
     def mocked_requests_get(cls, url: str):
         """Mock the requests.get method to return the appropriate payload."""
         if url in cls.route_payload:
             return Mock(**{'json.return_value': cls.route_payload[url]})
-        raise HTTPError()
+        return HTTPError
 
     @classmethod
     def tearDownClass(cls) -> None:
