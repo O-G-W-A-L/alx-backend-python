@@ -1,6 +1,9 @@
 from django.urls import path, include
+from rest_framework import routers
 from rest_framework_nested.routers import NestedDefaultRouter
 from .views import ConversationViewSet, MessageViewSet
+
+default_router = routers.DefaultRouter()
 
 router = NestedDefaultRouter()
 router.register(r'conversations', ConversationViewSet, basename='conversation')
