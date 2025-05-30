@@ -83,10 +83,10 @@ class TestGithubOrgClient(unittest.TestCase):
             [
                 {'name': 'repo1', 'license': {'key': 'apache-2.0'}},
                 {'name': 'repo2', 'license': {'key': 'apache-2.0'}},
-                {'name': 'repo3', 'license': {'key': 'mit'}},
+                {'name': 'repo3', 'license': {'key': 'mit'}}
             ],
             ['repo1', 'repo2', 'repo3'],
-            ['repo1', 'repo2'],
+            ['repo1', 'repo2']
         )
     ]
 )
