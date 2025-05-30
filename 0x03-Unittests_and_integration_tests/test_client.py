@@ -67,8 +67,10 @@ class TestGithubOrgClient(unittest.TestCase):
         ({'license': {'key': "my_license"}}, "my_license", True),
         ({'license': {'key': "other_license"}}, "my_license", False),
     ])
-    def test_has_license(self, repo: Dict, license_key: str, expected: bool
-    ) -> None:
+    def test_has_license(self,
+            repo: Dict,
+            license_key: str,
+            expected: bool) -> None:
         """Test the has_license method."""
         client = GithubOrgClient("google")
         self.assertEqual(client.has_license(repo, license_key), expected)
@@ -96,7 +98,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls) -> None:
         """Set up class fixtures before running tests."""
         cls.get_patcher = patch('requests.get')
-        cls.mock_get = cls.get_patcher.start()      
+        cls.mock_get = cls.get_patcher.start()
+
         def side_effect(url):
             if url == "https://api.github.com/orgs/google":
                 return Mock(json=lambda: cls.org_payload)
