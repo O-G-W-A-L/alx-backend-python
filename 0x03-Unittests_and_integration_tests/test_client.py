@@ -4,7 +4,7 @@ Unit tests for GithubOrgClient class
 """
 import unittest
 from unittest.mock import patch, MagicMock, PropertyMock, Mock
-from parameterized import parameterized_class
+from parameterized import parameterized, parameterized_class
 from requests.exceptions import HTTPError
 from client import GithubOrgClient, get_json
 from typing import Dict, List
@@ -75,23 +75,21 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(client.has_license(repo, license_key), expected)
 
 
-@parameterized_class(
-    ('org_payload', 'repos_payload', 'expected_repos', 'apache2_repos'),
-    [
-        (
-            {'login': 'google', 'repos_url': 'https://api.github.com/orgs/google/repos'},
-            [
-                {'name': 'repo1', 'license': {'key': 'apache-2.0'}},
-                {'name': 'repo2', 'license': {'key': 'apache-2.0'}},
-                {'name': 'repo3', 'license': {'key': 'mit'}}
-            ],
-            ['repo1', 'repo2', 'repo3'],
-            ['repo1', 'repo2']
-        ),
-    ]
-)
-class DummyCheckerClass:
-    pass
+@parameterized_class([
+    {
+        'org_payload': {
+            'login': 'google',
+            'repos_url': 'https://api.github.com/orgs/google/repos'
+        },
+        'repos_payload': [
+            {'name': 'repo1', 'license': {'key': 'apache-2.0'}},
+            {'name': 'repo2', 'license': {'key': 'apache-2.0'}},
+            {'name': 'repo3', 'license': {'key': 'mit'}},
+        ],
+        'expected_repos': ['repo1', 'repo2', 'repo3'],
+        'apache2_repos': ['repo1', 'repo2'],
+    },
+])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for the GithubOrgClient class."""
 
