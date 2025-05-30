@@ -9,6 +9,8 @@ from .serializers import ConversationSerializer, MessageSerializer
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['participants__email']
 
     def get_queryset(self):
         """Return conversations where the authenticated user is a participant."""
@@ -43,6 +45,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['message_body']
 
     def get_queryset(self):
         """Return messages from conversations the user is part of."""
