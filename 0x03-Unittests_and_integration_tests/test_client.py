@@ -87,9 +87,11 @@ class TestGithubOrgClient(unittest.TestCase):
             ],
             ['repo1', 'repo2', 'repo3'],
             ['repo1', 'repo2']
-        )
+        ),
     ]
 )
+class DummyCheckerClass:
+    pass
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for the GithubOrgClient class."""
 
