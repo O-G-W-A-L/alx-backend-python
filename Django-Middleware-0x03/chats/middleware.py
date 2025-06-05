@@ -66,3 +66,17 @@ class OffensiveLanguageMiddleware:
 
         response = self.get_response(request)
         return response
+
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.user.is_authenticated:
+            if not (request.user.is_superuser or request.user.groups.filter(name='moderator').exists()):
+                return HttpResponseForbidden("You do not have permission to access this resource.")
+        else:
+            return HttpResponseForbidden("You are not authenticated.")
+
+        response = self.get_response(request)
+        return response
