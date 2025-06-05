@@ -1,9 +1,9 @@
-from rest_framework import viewsets, status, serializers, filters
-from rest_framework.exceptions import ValidationError
+from rest_framework import viewsets, status, filters
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import MessageFilter, ConversationFilter
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Conversation, Message, User
@@ -54,28 +54,43 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Return messages for a specific conversation."""
-        return Message.objects.filter(
-            conversation__conversation_id=self.kwargs['conversation_pk'],
-            conversation__participants=self.request.user
-        ).order_by('-sent_at')
+        conversation = self.get_conversation()
+        if not conversation.participants.filter(id=self.request.user.id).exists():
+            raise PermissionDenied(
+                detail="You do not have permission to access this conversation.",
+                code=status.HTTP_403_FORBIDDEN
+            )
+        return Message.objects.filter(conversation=conversation)
 
     def perform_create(self, serializer):
-        """Create a new message in the conversation."""
+        conversation = self.get_conversation()
+        if not conversation.participants.filter(id=self.request.user.id).exists():
+            raise PermissionDenied(
+                detail="You do not have permission to send messages in this conversation.",
+                code=status.HTTP_403_FORBIDDEN
+            )
+        serializer.save(sender=self.request.user, conversation=conversation)
+
+    def perform_update(self, serializer):
+        if serializer.instance.sender != self.request.user:
+            raise PermissionDenied(
+                detail="You can only edit your own messages.",
+                code=status.HTTP_403_FORBIDDEN
+            )
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if instance.sender != self.request.user:
+            raise PermissionDenied(
+                detail="You can only delete your own messages.",
+                code=status.HTTP_403_FORBIDDEN
+            )
+        instance.delete()
+
+    def get_conversation(self):
         try:
-            # Get conversation by UUID
-            conversation = Conversation.objects.get(
+            return Conversation.objects.get(
                 conversation_id=self.kwargs['conversation_pk']
             )
-            
-            # Check if user is participant
-            if not conversation.participants.filter(id=self.request.user.id).exists():
-                raise ValidationError({'error': 'You are not a participant in this conversation'})
-            
-            # Create message
-            serializer.save(
-                sender=self.request.user,
-                conversation=conversation
-            )
         except Conversation.DoesNotExist:
-            raise ValidationError({'error': 'Conversation not found'})
+            raise ValidationError({"error": "Conversation not found"})
