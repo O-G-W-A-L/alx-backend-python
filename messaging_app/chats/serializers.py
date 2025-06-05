@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['user_id', 'email', 'first_name', 'last_name', 'phone_number', 'password']
+        fields = ['id', 'email', 'first_name', 'last_name', 'phone_number', 'password']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -31,11 +31,22 @@ class UserSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.PrimaryKeyRelatedField(read_only=True)
     conversation = serializers.PrimaryKeyRelatedField(read_only=True)
+    message_body = serializers.CharField(required=True)
 
     class Meta:
         model = Message
         fields = ['message_id', 'sender', 'conversation', 'message_body', 'sent_at']
-        read_only_fields = ['sent_at']
+        read_only_fields = ['message_id', 'sender', 'conversation', 'sent_at']
+
+    def create(self, validated_data):
+        """Create a new message."""
+        return Message.objects.create(**validated_data)
+
+    def to_representation(self, instance):
+        """Customize the message representation."""
+        data = super().to_representation(instance)
+        data['sender_name'] = instance.sender.get_full_name()
+        return data
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -45,8 +56,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = ['conversation_id', 'participants',
-        'created_at', 'messages', 'message_count']
+                  'created_at', 'messages', 'message_count']
         read_only_fields = ['created_at']
-    
+
     def get_message_count(self, obj):
         return obj.messages.count()

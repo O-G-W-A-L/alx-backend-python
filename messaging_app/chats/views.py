@@ -1,16 +1,23 @@
 from rest_framework import viewsets, status, serializers, filters
+from rest_framework.exceptions import ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import MessageFilter, ConversationFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer
+from .permissions import IsParticipantOfConversation
 
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = ConversationFilter
     search_fields = ['participants__email']
+    ordering_fields = ['created_at']
+    ordering = ['-created_at']
 
     def get_queryset(self):
         """Return conversations where the authenticated user is a participant."""
@@ -45,22 +52,30 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['message_body']
 
     def get_queryset(self):
-        """Return messages from conversations the user is part of."""
-        return Message.objects.filter(conversation__participants=self.request.user)
+        """Return messages for a specific conversation."""
+        return Message.objects.filter(
+            conversation__conversation_id=self.kwargs['conversation_pk'],
+            conversation__participants=self.request.user
+        ).order_by('-sent_at')
 
     def perform_create(self, serializer):
-        """Send a message in an existing conversation, ensuring the user is a participant."""
-        conversation_id = self.request.data.get('conversation_id')
-        if not conversation_id:
-            raise serializers.ValidationError("Conversation ID is required.")
-
+        """Create a new message in the conversation."""
         try:
-            conversation = Conversation.objects.get(pk=conversation_id, participants=self.request.user)
+            # Get conversation by UUID
+            conversation = Conversation.objects.get(
+                conversation_id=self.kwargs['conversation_pk']
+            )
+            
+            # Check if user is participant
+            if not conversation.participants.filter(id=self.request.user.id).exists():
+                raise ValidationError({'error': 'You are not a participant in this conversation'})
+            
+            # Create message
+            serializer.save(
+                sender=self.request.user,
+                conversation=conversation
+            )
         except Conversation.DoesNotExist:
-            raise serializers.ValidationError("Invalid conversation or access denied.")
-
-        serializer.save(sender=self.request.user, conversation=conversation)
+            raise ValidationError({'error': 'Conversation not found'})
