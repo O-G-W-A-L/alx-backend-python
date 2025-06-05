@@ -1,5 +1,8 @@
 import logging
 from datetime import datetime
+from django.http import HttpResponseForbidden
+from django.utils import timezone
+from django.http import HttpResponseForbidden
 
 class RequestLoggingMiddleware:
     def __init__(self, get_response):
@@ -36,3 +39,30 @@ class RestrictAccessByTimeMiddleware:
             return HttpResponseForbidden("Access to chats is only allowed between 6PM and 9PM.")
 
         return self.get_response(request)
+
+class OffensiveLanguageMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.message_limits = {}
+
+    def __call__(self, request):
+        ip = request.META.get('REMOTE_ADDR')
+        if request.method == 'POST':
+            current_time = timezone.now()
+
+            if ip in self.message_limits:
+                last_request_time, count = self.message_limits[ip]
+                time_diff = current_time - last_request_time
+
+                if time_diff.total_seconds() > 60:
+                    self.message_limits[ip] = (current_time, 1)
+                else:
+                    if count >= 5:
+                        return HttpResponseForbidden("You have exceeded the message limit. Please try again later.")
+                    else:
+                        self.message_limits[ip] = (current_time, count + 1)
+            else:
+                self.message_limits[ip] = (current_time, 1)
+
+        response = self.get_response(request)
+        return response
