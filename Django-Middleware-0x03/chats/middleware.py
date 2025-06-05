@@ -22,3 +22,17 @@ class RequestLoggingMiddleware:
 
         response = self.get_response(request)
         return response
+
+class RestrictAccessByTimeMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        current_hour = datetime.now().hour
+        restricted_path = '/chats/'
+
+        # Block access if not between 18 (6PM) and 21 (9PM)
+        if request.path.startswith(restricted_path) and not (18 <= current_hour < 21):
+            return HttpResponseForbidden("Access to chats is only allowed between 6PM and 9PM.")
+
+        return self.get_response(request)
