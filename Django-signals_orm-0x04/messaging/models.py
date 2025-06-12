@@ -16,6 +16,7 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    read = models.BooleanField(default=False)
 
     parent_message = models.ForeignKey(
     'self',
@@ -23,7 +24,10 @@ class Message(models.Model):
     null=True,
     blank=True,
     related_name='replies'
-)
+    )
+    objects = models.Manager()
+    unread = UnreadMessagesManager()
+
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver} at {self.timestamp}"
     

@@ -40,3 +40,8 @@ def conversation_view(request, conversation_user_id):
     } for msg in root_messages]
 
     return render(request, 'messaging/conversation.html', {'threaded_data': threaded_data})
+
+@login_required
+def unread_messages_view(request):
+    unread_messages = Message.unread.unread_for_user(request.user)
+    return render(request, 'messaging/unread_messages.html', {'unread_messages': unread_messages})
