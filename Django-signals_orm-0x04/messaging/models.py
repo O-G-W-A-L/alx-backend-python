@@ -15,10 +15,24 @@ class Message(models.Model):
     )
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)  # ✅ required for checker
+    edited = models.BooleanField(default=False)
 
+    parent_message = models.ForeignKey(
+    'self',
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True,
+    related_name='replies'
+)
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver} at {self.timestamp}"
+    
+    def get_all_replies(self):
+    """Recursively fetch all replies to this message."""
+    replies = self.replies.all()
+    for reply in replies:
+        replies += reply.get_all_replies()
+    return replies
 
 class Notification(models.Model):
     user = models.ForeignKey(
