@@ -22,7 +22,7 @@ def conversation_view(request, conversation_user_id):
     # Fetch root messages for the conversation with the specified user
     root_messages = Message.objects.filter(
         parent_message__isnull=True,
-        sender=user,
+        sender=request.user,
         receiver__id=conversation_user_id
     ).select_related('sender', 'receiver').prefetch_related('replies')
 
